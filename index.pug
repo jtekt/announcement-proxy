@@ -1,0 +1,16 @@
+
+
+doctype html
+html
+  head
+    title Anouncement 
+    style(type="text/css").
+      body {
+        text-align: center;
+      }
+  body
+    h1 Anouncement
+    p Message: #{message}
+    form(method='POST' action='/acknowledge')
+      button.btn.btn-primary(type='submit') Acknowledge
+
