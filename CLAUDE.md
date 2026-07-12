@@ -26,22 +26,27 @@ There are no tests or linter configured in this project.
 Everything lives in `index.ts`, a single Express app with two routes:
 
 - `POST /acknowledge` — sets the acknowledgement cookie (`COOKIE_NAME`) and
-  redirects back to the `Referer`.
+  redirects back to the `Referer`, but only if its host matches the request's
+  own host (prevents using this endpoint as an open redirect).
 - `GET /{*splat}` (catch-all) — if the request looks like it's from a browser
   (`User-Agent` matches `Mozilla|Chrome|Safari|Firefox|Edge`) and the
   acknowledgement cookie is not set, it renders `index.pug` with the
   `ANNOUNCEMENT` message instead of proxying. Otherwise, the request is
-  forwarded to `TARGET_BASE_URL` using `http-proxy`.
+  forwarded to `TARGET_BASE_URL` using `http-proxy`; proxy errors are passed
+  to `next()` as a 502 rather than thrown, so a failing upstream doesn't
+  crash the process.
 
 `index.pug` is the only view — a minimal page with the announcement message
 and a form that POSTs to `/acknowledge`.
 
 Configuration is entirely environment-variable driven (loaded via `dotenv`),
 with no config files: `PORT`, `TARGET_BASE_URL`, `ANNOUNCEMENT`, and
-`COOKIE_NAME`. Note the code intentionally spells `ANNOUNCEMENT` correctly
-but the default `COOKIE_NAME` value (`anouncement_aknowledged`) is
-misspelled — this is the existing default cookie name in production, so
-don't "fix" the spelling without checking downstream impact.
+`COOKIE_NAME`. `TARGET_BASE_URL` is required — the app throws at startup if
+it's unset, rather than silently falling back to some default target. Note
+the code intentionally spells `ANNOUNCEMENT` correctly but the default
+`COOKIE_NAME` value (`anouncement_aknowledged`) is misspelled — this is the
+existing default cookie name in production, so don't "fix" the spelling
+without checking downstream impact.
 
 ## Deployment
 

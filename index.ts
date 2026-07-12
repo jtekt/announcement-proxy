@@ -12,20 +12,41 @@ const proxy = httpProxy.createProxyServer();
 
 const {
   PORT = 3000,
-  TARGET_BASE_URL = "https://google.com",
+  TARGET_BASE_URL,
   ANNOUNCEMENT = "No anouncement message provided",
   COOKIE_NAME = "anouncement_aknowledged",
 } = process.env;
 
+if (!TARGET_BASE_URL) {
+  throw new Error("TARGET_BASE_URL environment variable must be set");
+}
+
 app.post("/acknowledge", (req, res) => {
   const {
-    headers: { referer = "/" },
+    headers: { referer, host },
   } = req;
-  res.cookie(COOKIE_NAME, "true");
-  res.redirect(referer);
+
+  let redirectPath = "/";
+  if (referer) {
+    try {
+      const refererUrl = new URL(referer);
+      if (refererUrl.host === host) {
+        redirectPath = `${refererUrl.pathname}${refererUrl.search}`;
+      }
+    } catch {
+      // invalid referer header, fall back to "/"
+    }
+  }
+
+  res.cookie(COOKIE_NAME, "true", {
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: 1000 * 60 * 60 * 24 * 365,
+  });
+  res.redirect(redirectPath);
 });
 
-app.get("/{*splat}", (req, res) => {
+app.get("/{*splat}", (req, res, next) => {
   const {
     cookies: { [COOKIE_NAME]: acknowledged },
     headers: { "user-agent": userAgent = "" },
@@ -47,7 +68,7 @@ app.get("/{*splat}", (req, res) => {
   };
 
   proxy.web(req, res, options, (error: any) => {
-    if (error) throw createHttpError(500, error);
+    next(createHttpError(502, error));
   });
 });
 

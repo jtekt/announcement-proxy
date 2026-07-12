@@ -22,7 +22,7 @@ checks) skip the announcement and are proxied straight through.
 | Variable          | Description                                    | Default                          |
 | ----------------- | ----------------------------------------------- | --------------------------------- |
 | `PORT`             | Port the server listens on                      | `3000`                            |
-| `TARGET_BASE_URL`  | Base URL of the application being proxied to    | `https://google.com`              |
+| `TARGET_BASE_URL`  | Base URL of the application being proxied to    | *required* — the server refuses to start without it |
 | `ANNOUNCEMENT`     | Message displayed on the announcement page      | `No anouncement message provided` |
 | `COOKIE_NAME`      | Name of the cookie used to track acknowledgement | `anouncement_aknowledged`         |
 
