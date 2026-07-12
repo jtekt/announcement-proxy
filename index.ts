@@ -13,7 +13,7 @@ const proxy = httpProxy.createProxyServer();
 const {
   PORT = 3000,
   TARGET_BASE_URL = "https://google.com",
-  ANOUNCEMENT = "No anouncement",
+  ANNOUNCEMENT = "No anouncement message provided",
   COOKIE_NAME = "anouncement_aknowledged",
 } = process.env;
 
@@ -36,7 +36,7 @@ app.get("/{*splat}", (req, res) => {
   if (!acknowledged && isBrowser) {
     const compiledFunction = pug.compileFile("index.pug");
     const html = compiledFunction({
-      message: ANOUNCEMENT,
+      message: ANNOUNCEMENT,
     });
     return res.send(html);
   }
