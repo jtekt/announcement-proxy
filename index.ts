@@ -46,7 +46,7 @@ app.post("/acknowledge", (req, res) => {
   res.redirect(redirectPath);
 });
 
-app.get("/{*splat}", (req, res, next) => {
+app.all("/{*splat}", (req, res, next) => {
   const {
     cookies: { [COOKIE_NAME]: acknowledged },
     headers: { "user-agent": userAgent = "" },
