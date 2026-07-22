@@ -25,6 +25,7 @@ checks) skip the announcement and are proxied straight through.
 | `TARGET_BASE_URL`  | Base URL of the application being proxied to    | *required* — the server refuses to start without it |
 | `ANNOUNCEMENT`     | Message displayed on the announcement page      | `No anouncement message provided` |
 | `COOKIE_NAME`      | Name of the cookie used to track acknowledgement | `anouncement_aknowledged`         |
+| `COOKIE_MAX_AGE_DAYS` | Number of days the acknowledgement cookie lasts | `365`                          |
 
 A `.env` file may be used to set these locally (see `dotenv`).
 

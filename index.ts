@@ -15,7 +15,10 @@ const {
   TARGET_BASE_URL,
   ANNOUNCEMENT = "No anouncement message provided",
   COOKIE_NAME = "anouncement_aknowledged",
+  COOKIE_MAX_AGE_DAYS = "365",
 } = process.env;
+
+const cookieMaxAge = 1000 * 60 * 60 * 24 * Number(COOKIE_MAX_AGE_DAYS);
 
 if (!TARGET_BASE_URL) {
   throw new Error("TARGET_BASE_URL environment variable must be set");
@@ -41,7 +44,7 @@ app.post("/acknowledge", (req, res) => {
   res.cookie(COOKIE_NAME, "true", {
     httpOnly: true,
     sameSite: "lax",
-    maxAge: 1000 * 60 * 60 * 24 * 365,
+    maxAge: cookieMaxAge,
   });
   res.redirect(redirectPath);
 });
