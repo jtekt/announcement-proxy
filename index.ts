@@ -4,6 +4,7 @@ import httpProxy from "http-proxy";
 import createHttpError from "http-errors";
 import cookieParser from "cookie-parser";
 import pug from "pug";
+import promBundle from 'express-prom-bundle';
 
 const app = express();
 app.use(cookieParser());
@@ -23,6 +24,18 @@ const cookieMaxAge = 1000 * 60 * 60 * 24 * Number(COOKIE_MAX_AGE_DAYS);
 if (!TARGET_BASE_URL) {
   throw new Error("TARGET_BASE_URL environment variable must be set");
 }
+
+// metrics
+const promOptions = {
+  includeMethod: true,
+  includePath: true,
+  includeStatusCode: true,
+  promClient: {
+    collectDefaultMetrics: {},
+  },
+};
+
+app.use(promBundle(promOptions));
 
 app.post("/acknowledge", (req, res) => {
   const {
