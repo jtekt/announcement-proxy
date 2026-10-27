@@ -84,6 +84,7 @@ app.all("/{*splat}", (req, res, next) => {
   };
 
   req.headers["x-forwarded-host"] = req.headers["host"];
+  // TODO: consider also x-forwarded-proto
 
   proxy.web(req, res, options, (error: any) => {
     next(createHttpError(502, error));
