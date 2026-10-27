@@ -4,7 +4,7 @@ import httpProxy from "http-proxy";
 import createHttpError from "http-errors";
 import cookieParser from "cookie-parser";
 import pug from "pug";
-import promBundle from 'express-prom-bundle';
+import promBundle from "express-prom-bundle";
 
 const app = express();
 app.use(cookieParser());
@@ -82,6 +82,8 @@ app.all("/{*splat}", (req, res, next) => {
     target: TARGET_BASE_URL,
     changeOrigin: true,
   };
+
+  req.headers["x-forwarded-host"] = req.headers["host"];
 
   proxy.web(req, res, options, (error: any) => {
     next(createHttpError(502, error));
